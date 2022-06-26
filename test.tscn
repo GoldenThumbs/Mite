@@ -1,0 +1,157 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://src/editor/grid_node.gd" type="Script" id=1]
+[ext_resource path="res://src/editor/view_3d.gd" type="Script" id=2]
+[ext_resource path="res://src/editor/editor_level.gd" type="Script" id=3]
+[ext_resource path="res://src/editor/editor_camera.gd" type="Script" id=4]
+[ext_resource path="res://src/editor/editor_main.gd" type="Script" id=5]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[node name="Editor" type="Node2D"]
+z_index = 1
+script = ExtResource( 5 )
+
+[node name="Scene2D" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="Scene2D"]
+current = true
+script = ExtResource( 4 )
+
+[node name="Grid" type="Node2D" parent="Scene2D/Camera2D"]
+z_index = -1
+script = ExtResource( 1 )
+
+[node name="Level2D" type="Node2D" parent="Scene2D"]
+z_as_relative = false
+script = ExtResource( 3 )
+
+[node name="GUI_Layer" type="CanvasLayer" parent="."]
+
+[node name="GUI_Control" type="Control" parent="GUI_Layer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="View_3D" type="WindowDialog" parent="GUI_Layer/GUI_Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -256.0
+margin_top = -128.0
+margin_right = 256.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 256, 128 )
+focus_mode = 2
+mouse_filter = 1
+window_title = "View 3D"
+resizable = true
+script = ExtResource( 2 )
+
+[node name="ViewportContainer" type="ViewportContainer" parent="GUI_Layer/GUI_Control/View_3D"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+stretch = true
+stretch_shrink = 2
+
+[node name="Viewport" type="Viewport" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer"]
+size = Vector2( 256, 128 )
+size_override_stretch = true
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="Scene3D" type="Spatial" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer/Viewport"]
+
+[node name="Sun" type="DirectionalLight" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer/Viewport/Scene3D"]
+transform = Transform( 0.866025, 0.25, -0.433013, 0, 0.866025, 0.5, 0.5, -0.433013, 0.75, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer/Viewport/Scene3D"]
+current = true
+
+[node name="OmniLight" type="OmniLight" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer/Viewport/Scene3D/Camera"]
+light_energy = 0.45
+
+[node name="Level3D" type="Spatial" parent="GUI_Layer/GUI_Control/View_3D/ViewportContainer/Viewport/Scene3D"]
+
+[node name="TopBar" type="Panel" parent="GUI_Layer/GUI_Control"]
+anchor_right = 1.0
+margin_bottom = 32.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="GUI_Layer/GUI_Control/TopBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_vertical_enabled = false
+
+[node name="GroupContainer" type="HBoxContainer" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer"]
+margin_right = 373.0
+margin_bottom = 32.0
+size_flags_vertical = 3
+
+[node name="Group_Tools" type="HBoxContainer" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer"]
+margin_right = 209.0
+margin_bottom = 32.0
+
+[node name="Tool_Draw" type="Button" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools"]
+margin_right = 44.0
+margin_bottom = 32.0
+toggle_mode = true
+pressed = true
+action_mode = 0
+group = SubResource( 1 )
+text = "Draw"
+
+[node name="Tool_Wall_Edit" type="Button" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools"]
+margin_left = 48.0
+margin_right = 116.0
+margin_bottom = 32.0
+toggle_mode = true
+action_mode = 0
+group = SubResource( 1 )
+text = "Wall Edit"
+
+[node name="Tool_Vertex_Edit" type="Button" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools"]
+margin_left = 120.0
+margin_right = 201.0
+margin_bottom = 32.0
+toggle_mode = true
+action_mode = 0
+group = SubResource( 1 )
+text = "Vertex Edit"
+
+[node name="Sep_Tools" type="VSeparator" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools"]
+margin_left = 205.0
+margin_right = 209.0
+margin_bottom = 32.0
+
+[node name="Group_Ops" type="HBoxContainer" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer"]
+margin_left = 213.0
+margin_right = 373.0
+margin_bottom = 32.0
+
+[node name="Op_NewRoom" type="Button" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Ops"]
+margin_right = 81.0
+margin_bottom = 32.0
+action_mode = 0
+text = "New Room"
+
+[node name="Op_FlipWall" type="Button" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Ops"]
+margin_left = 85.0
+margin_right = 152.0
+margin_bottom = 32.0
+action_mode = 0
+text = "Flip Wall"
+
+[node name="Sep_Ops" type="VSeparator" parent="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Ops"]
+margin_left = 156.0
+margin_right = 160.0
+margin_bottom = 32.0
+
+[connection signal="pressed" from="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools/Tool_Draw" to="." method="_on_Tool_Draw_pressed"]
+[connection signal="pressed" from="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools/Tool_Wall_Edit" to="." method="_on_Tool_Wall_Edit_pressed"]
+[connection signal="pressed" from="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Tools/Tool_Vertex_Edit" to="." method="_on_Tool_Vertex_Edit_pressed"]
+[connection signal="pressed" from="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Ops/Op_NewRoom" to="." method="_on_Op_NewRoom_pressed"]
+[connection signal="pressed" from="GUI_Layer/GUI_Control/TopBar/ScrollContainer/GroupContainer/Group_Ops/Op_FlipWall" to="." method="_on_Op_FlipWall_pressed"]

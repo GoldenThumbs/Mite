@@ -1,0 +1,20 @@
+// Default Textures List File
+// All paths are relative to where the file is located
+// Level will search for this file in lvl_tex_path
+// "" means default value
+
+[brick_0]
+albedo = "walls/brick_0.png"
+normal = ""
+orm = ""
+
+[cobble_wall]
+albedo = "walls/cobble_wall.png"
+normal = ""
+orm = ""
+
+[devtex_0]
+albedo = "walls/devtex_0.png"
+normal = ""
+orm = ""
+r = 0.1
