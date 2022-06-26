@@ -2,12 +2,10 @@ extends Reference
 class_name Level
 
 var lvl_name : String
-var lvl_tex_path : String
 var lvl_rooms := []
 
-func _init(name := "Untitled", tex_path := "textures") -> void:
+func _init(name := "Untitled") -> void:
 	self.lvl_name = name
-	self.lvl_tex_path = tex_path
 
 func create_empty_room(tex_f := "", tex_c := "") -> void:
 	var room := Level_Room.new()

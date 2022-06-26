@@ -73,6 +73,10 @@ config/description="Model Sprite"
 run/main_scene="res://test.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+MatImport="*res://src/editor/mat_import.gd"
+
 [input]
 
 ui_accept={

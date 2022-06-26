@@ -189,7 +189,7 @@ func _ed_gen_level_3d() -> void:
 	
 	for i in _ed_level.lvl_rooms.size():
 		var room := _ed_level.get_room(i)
-		var room_msh : ArrayMesh = room.gen_room_mesh(_ed_level.lvl_tex_path)
+		var room_msh : ArrayMesh = room.gen_room_mesh()
 		var room_mdl := MeshInstance.new()
 		room_mdl.mesh = room_msh
 		_3d_level.add_child(room_mdl)

@@ -91,10 +91,8 @@ func _check_valid_index_wall(idx : int) -> bool:
 		print("ERROR: Wall index [" + var2str(idx) + "] out of range!")
 	return check
 
-func gen_room_mesh(base_tex_path : String, subdivide := false) -> ArrayMesh:
+func gen_room_mesh(subdivide := false) -> ArrayMesh:
 	var msh := ArrayMesh.new()
-	
-	var mats := _load_texture_materials(base_tex_path)
 	
 	for i in room_walls.size():
 		var wall : Level_Wall = room_walls[i]
@@ -124,8 +122,8 @@ func gen_room_mesh(base_tex_path : String, subdivide := false) -> ArrayMesh:
 		msh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 		
 		var srf_mat : SpatialMaterial = null
-		if !wall.tex_main.empty() && mats.has(wall.tex_main):
-			srf_mat = mats[wall.tex_main]
+		if !wall.tex_main.empty() && MatImport.ed_materials.has(wall.tex_main):
+			srf_mat = MatImport.ed_materials[wall.tex_main]
 		
 		var srf_id = msh.get_surface_count() - 1
 		if srf_id > -1:
@@ -192,8 +190,8 @@ func gen_room_mesh(base_tex_path : String, subdivide := false) -> ArrayMesh:
 		msh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 		
 		var srf_mat : SpatialMaterial = null
-		if !room_tex_floor.empty() && mats.has(room_tex_floor):
-			srf_mat = mats[room_tex_floor]
+		if !room_tex_floor.empty() && MatImport.ed_materials.has(room_tex_floor):
+			srf_mat = MatImport.ed_materials[room_tex_floor]
 		
 		var srf_id = msh.get_surface_count() - 1
 		if srf_id > -1:
@@ -205,8 +203,8 @@ func gen_room_mesh(base_tex_path : String, subdivide := false) -> ArrayMesh:
 		arr[ArrayMesh.ARRAY_INDEX] = id_c
 		msh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 		
-		if !room_tex_ceiling.empty() && mats.has(room_tex_ceiling):
-			srf_mat = mats[room_tex_ceiling]
+		if !room_tex_ceiling.empty() && MatImport.ed_materials.has(room_tex_ceiling):
+			srf_mat = MatImport.ed_materials[room_tex_ceiling]
 		
 		srf_id = msh.get_surface_count() - 1
 		if srf_id > -1:
@@ -478,50 +476,3 @@ func _is_clockwise(a : Vector2, b : Vector2, center : Vector2) -> int:
 		return 1 # Clock-Wise?
 	else:
 		return 2 # Counter-Clock-Wise?
-
-func _load_texture_materials(base_path : String, cfg_name := "default.tres") -> Dictionary:
-	if cfg_name.empty() || base_path.empty():
-		return {}
-	
-	var data := {}
-	var cfg := ConfigFile.new()
-	var err := cfg.load(base_path + "/" + cfg_name)
-	if err != OK:
-		return {}
-	for mat_name in cfg.get_sections():
-		var mat := SpatialMaterial.new()
-		var cfg_dif : String = cfg.get_value(mat_name, "albedo", "")
-		var cfg_nrm : String = cfg.get_value(mat_name, "normal", "")
-		var cfg_orm : String = cfg.get_value(mat_name, "orm", "")
-		var cfg_r : float = cfg.get_value(mat_name, "r", 1.0)
-		var cfg_m : float = cfg.get_value(mat_name, "m", 0.0)
-		
-		mat.roughness = cfg_r
-		mat.metallic = cfg_m
-		
-		if !cfg_dif.empty():
-			mat.albedo_texture = _check_and_load_tex(base_path, cfg_dif)
-		if !cfg_nrm.empty():
-			mat.normal_texture = _check_and_load_tex(base_path, cfg_nrm)
-		if !cfg_orm.empty():
-			var input := _check_and_load_tex(base_path, cfg_nrm)
-			
-			mat.ao_texture = input
-			mat.roughness_texture = input
-			mat.metallic_texture = input
-			
-			mat.ao_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
-			mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
-			mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_BLUE
-		data[mat_name] = mat
-	return data
-
-func _check_and_load_tex(base_tex_path : String, tex_name : String) -> Texture:
-	var tex_result : Texture = null
-	if !tex_name.empty():
-		var tex_path := base_tex_path + "/" + tex_name
-		if ResourceLoader.exists(tex_path, "Texture"):
-			tex_result = ResourceLoader.load(tex_path, "Texture")
-		else:
-			print("ERROR: Texture at path [" + tex_path + "] does not exist!")
-	return tex_result
